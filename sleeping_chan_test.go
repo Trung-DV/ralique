@@ -40,6 +40,7 @@ func TestTicketPool(t *testing.T) {
 	} {
 		t.Run(fmt.Sprintf("max_%d_items,window_%s,%d_concurr_take_%s,need_total_%s", tc.maxSlot, tc.windowTime, tc.concurNumber, tc.workingTime, tc.expectDur), func(t *testing.T) {
 			t.Parallel()
+
 			windowTime, err := time.ParseDuration(tc.windowTime)
 			require.NoError(t, err)
 			workingTime, err := time.ParseDuration(tc.workingTime)
@@ -52,7 +53,7 @@ func TestTicketPool(t *testing.T) {
 			wg := sync.WaitGroup{}
 			for i := 0; i < tc.concurNumber; i++ {
 				wg.Add(1)
-				go rt.EnqueueJobWithCallback(
+				<-rt.EnqueueJobWithCallback(
 					func() {
 						time.Sleep(workingTime)
 						t.Log("executed", time.Now())
